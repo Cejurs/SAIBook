@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAIBook", "SAIBook\SAIBook.csproj", "{26111D09-A6F1-4508-905D-E2189B4C7D55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAIBook", "SAIBook\SAIBook.csproj", "{26111D09-A6F1-4508-905D-E2189B4C7D55}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralNetwork", "NeuralNetwork\NeuralNetwork.csproj", "{FBF81C9C-27ED-44CB-B794-6A07986D7D28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{C2F79833-12C1-43B3-91EC-4CEF87BC5D12}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FBF81C9C-27ED-44CB-B794-6A07986D7D28} = {FBF81C9C-27ED-44CB-B794-6A07986D7D28}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,14 @@ Global
 		{26111D09-A6F1-4508-905D-E2189B4C7D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26111D09-A6F1-4508-905D-E2189B4C7D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26111D09-A6F1-4508-905D-E2189B4C7D55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF81C9C-27ED-44CB-B794-6A07986D7D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF81C9C-27ED-44CB-B794-6A07986D7D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF81C9C-27ED-44CB-B794-6A07986D7D28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF81C9C-27ED-44CB-B794-6A07986D7D28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2F79833-12C1-43B3-91EC-4CEF87BC5D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2F79833-12C1-43B3-91EC-4CEF87BC5D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2F79833-12C1-43B3-91EC-4CEF87BC5D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2F79833-12C1-43B3-91EC-4CEF87BC5D12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
