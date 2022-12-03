@@ -8,31 +8,38 @@ namespace NeuralNetwork
         Hidden,
         Output
     }
-    [Serializable]
     public class Neuron
     {
-        private double[] weights;
-        [NonSerialized]
+        public double[] Weights { get; private set; }
         private double[] inputs;
+
+        private IActivator activator;
         public double Delta { get; private set; }
-        public NeuronType Type { get; }
+        public NeuronType Type { get; private set; }
 
         public double Output { get; private set; }
 
-        public Neuron(int inputCount, NeuronType type)
+        public Neuron(int inputCount, IActivator activationFunction, NeuronType type)
         {
             if (inputCount <= 0) throw new ArgumentOutOfRangeException(nameof(inputCount));
-            weights = new double[inputCount];
+            Weights = new double[inputCount];
             inputs = new double[inputCount];
             Type = type;
+            activator = activationFunction;
             var random = new Random();
             for (int i=0; i < inputCount; i++)
             {
-                weights[i] = Type == NeuronType.Input ? 1 : random.NextDouble();
+                Weights[i] = Type == NeuronType.Input ? 1 : random.NextDouble();
             }
         }
-
-        public double GetWeight(int index) => weights[index];
+        internal void SetWeights(IEnumerable<double> weights)
+        {
+            if(weights.Count() != this.inputs.Length)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            this.Weights = weights.ToArray();
+        }
         public double FeedForward(IEnumerable<double> inputSignals)
         {
             if (inputSignals.Count() != inputs.Length)
@@ -43,37 +50,22 @@ namespace NeuralNetwork
             var sum = 0.0;
             for(int i=0; i < inputs.Length; i++)
             {
-                sum = inputs[i] * weights[i];
+                sum = inputs[i] * Weights[i];
             }
-            Output = Type == NeuronType.Input ? sum : Sigmoid(sum);
+            Output = Type == NeuronType.Input ? sum : activator.Activate(sum);
             return Output;
         }
 
         public void Learn(double error,double learningRate)
         {
             if(Type == NeuronType.Input) return;
-            Delta = error * SigmoidDx(Output);
-            for (int i =0; i< weights.Length;i++)
+            Delta = error * activator.Dx(Output);
+            for (int i =0; i< Weights.Length;i++)
             {
                 var input = inputs[i];
-                var weight = weights[i];
-                weights[i] = weight - Delta * input * learningRate;
+                var weight = Weights[i];
+                Weights[i] = weight - Delta * input * learningRate;
             }
-        }
-
-        private double Sigmoid(double x)
-        {
-            return 1.0 / (1.0 + Math.Pow(Math.E, -x));
-        }
-        private double SigmoidDx(double x)
-        {
-            var sigmoid = Sigmoid(x);
-            return sigmoid*(1-sigmoid);
-        }
-        [OnDeserialized]
-        private void OnDeserialized()
-        {
-            inputs = new double[weights.Length];
         }
     }
 }

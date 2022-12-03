@@ -1,6 +1,5 @@
 ﻿namespace NeuralNetwork
 {
-    [Serializable]
     public class Layer
     {
         public Neuron[] Neurons { get; }
@@ -9,6 +8,7 @@
 
         public Layer(IEnumerable<Neuron> neurons, NeuronType layerType)
         {
+            LayerType= layerType;
             foreach(Neuron neuron in neurons)
             {
                 if (neuron.Type != layerType) throw new ArgumentException("Нейроны на слое должны соответсвовать типу слоя");
