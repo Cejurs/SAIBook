@@ -1,213 +1,117 @@
-﻿
-
-using System.Text;
-using System.Text.Json;
+﻿using System.Linq;
 
 namespace NeuralNetwork
 {
     public class SimpleNeuralNetwork
     {
-        private IList<Layer> layers;
-        public double LearningRate { get; private set; }
+        private Neuron[][] neurons;
 
-        public SimpleNeuralNetwork()
+        public SimpleNeuralNetwork(params int[] neuronsCountInLayers)
         {
-            layers = new List<Layer>();
-        }
-        public void SetLearningRate(double learningRate)
-        {
-            this.LearningRate = learningRate;
-        }
-        public void CreateInputLayer(int neuronsCount,IActivator activationFunction)
-        {
-            if (layers.Count != 0) throw new ArgumentException("Входной слои может быть создан только 1");
-            if(neuronsCount <= 0 ) throw new ArgumentOutOfRangeException("Количество нейронов на входном слое не может быть 0 или отрицательным");
-            var inputNeurons = new List<Neuron>();
-            for (int i = 0; i < neuronsCount; i++)
+            neurons = new Neuron[neuronsCountInLayers.Length][];
+
+            for (int i = 0; i < neurons.Length; i++)
             {
-                var neuron = new Neuron(1, activationFunction, NeuronType.Input);
-                inputNeurons.Add(neuron);
-            }
-            var inputLayer = new Layer(inputNeurons, NeuronType.Input);
-            layers.Add(inputLayer);
-        }
-
-        public void CreateHiddenLayer(int neuronsCount, IActivator activationFunction)
-        {
-            if (layers.Count == 0) throw new ArgumentException("Отсутствует входной слой");
-            if (neuronsCount <= 0 ) throw new ArgumentOutOfRangeException("Количество нейронов на скрытом слое не может быть 0 или отрицательным");
-            var hiddenNeurons = new List<Neuron>();
-            for (int iter = 0; iter < neuronsCount; iter++)
-            {
-                var lastLayerNeuronsCount = layers.Last().NeuronsCount;
-                var neuron = new Neuron(lastLayerNeuronsCount,activationFunction, NeuronType.Hidden);
-                hiddenNeurons.Add(neuron);
-            }
-            var hiddenLayer = new Layer(hiddenNeurons, NeuronType.Hidden);
-            layers.Add(hiddenLayer);
-        }
-
-        public void CreateOutputLayer(int neuronsCount, IActivator activationFunction)
-        {
-            if (layers.Count == 0) throw new ArgumentException("Входной слой должен быть создан");
-            var outputNeurons = new List<Neuron>();
-            var lastLayerNeuronsCount = layers.Last().NeuronsCount;
-            for (int i = 0; i < neuronsCount; i++)
-            {
-                var neuron = new Neuron(lastLayerNeuronsCount, activationFunction, NeuronType.Output);
-                outputNeurons.Add(neuron);
-            }
-            var outputLayer = new Layer(outputNeurons, NeuronType.Output);
-            layers.Add(outputLayer);
-        }
-
-        public double[] Predict(IList<double> inputSignals)
-        {
-            if (layers.First().LayerType != NeuronType.Input) throw new Exception("Отсутсвует входной слой");
-            if (layers.Last().LayerType != NeuronType.Output) throw new Exception("Отсутсвует выходной слой");
-            if (inputSignals.Count() != layers.First().NeuronsCount)
-            {
-                throw new ArgumentException("Количество входных сигналов не совпдает с количеством нейронов на входном слое");
-            }
-            SendInputSignalsToInputLayer(inputSignals);
-            FeedForward();
-            return layers.Last().GetSignals().ToArray();
-
-        }
-
-        private void FeedForward()
-        {
-            for (int i = 1; i<layers.Count; i++)
-            {
-                var signals = layers[i-1].GetSignals().ToArray();
-                foreach (var neuron in layers[i].Neurons)
+                neurons[i] = new Neuron[neuronsCountInLayers[i]];
+                if (i != 0)
                 {
-                    neuron.FeedForward(signals);
-                }
-            }
-        }
-
-        //public double Learn(double[] inputSignals, double[] expectedResult,int epochCount)
-        //{
-        //    if(expectedResult.Length != Topology.OutputCount) 
-        //    {
-        //        throw new ArgumentException(nameof(expectedResult));
-        //    }
-        //    if (inputSignals.Length != Topology.InputCount)
-        //    {
-        //        throw new ArgumentException(nameof(inputSignals));
-        //    }
-        //    if (epochCount < 0)
-        //    {
-        //        throw new ArgumentException(nameof(epochCount));
-        //    }
-        //    for (int i = 0; i < epochCount; i++)
-        //    {
-        //        var totalError = 0.0;
-
-        //    }
-        //}
-
-        private double Backpropagation(double[] inputSignals, double[] expectedResult)
-        {
-            double squareErrorSum = BackpropagationOnOutputLayer(inputSignals, expectedResult);
-            BackpropagationOnHiddenLayers();
-            return squareErrorSum;
-        }
-        private void BackpropagationOnHiddenLayers()
-        {
-            for(int i = layers.Count -2; i>=1;i--)
-            {
-                var currentLayer = layers[i];
-                var previousLayer = layers[i+1];
-                Parallel.For(0, currentLayer.NeuronsCount, (n) =>
-                {
-                    var neuron = currentLayer.Neurons[n];
-                    var error = 0.0;
-                    for(int j = 0; j< previousLayer.NeuronsCount; j++)
+                    for (int j = 0; j < neuronsCountInLayers[i]; j++)
                     {
-                        var previousNeuron = previousLayer.Neurons[j];
-                        error += previousNeuron.Delta * previousNeuron.Weights[n];
-                    }
-                    neuron.Learn(error, LearningRate);
-                });
-            }
-        }
-        private double BackpropagationOnOutputLayer(double[] inputSignals, double[] expectedResult)
-        {
-            var squareErrorSum = 0.0;
-            var actualResult = Predict(inputSignals);
-            var outputLayer = layers.Last();
-            for (int i = 0; i < expectedResult.Length; i++)
-            {
-                var error = actualResult[i] - expectedResult[i];
-                outputLayer.Neurons[i].Learn(error,LearningRate);
-                squareErrorSum += error * error;
-            }
-            return squareErrorSum;
-        }
-        private void SendInputSignalsToInputLayer(IList<double> inputSignals)
-        {
-            var inputLayer = layers.First();
-            for (int i = 0; i < inputSignals.Count(); i++)
-            {
-                inputLayer.Neurons[i].FeedForward(new double[] { inputSignals[i] });
-            }
-        }
-
-        public void SaveWeights(string path)
-        {
-            if (File.Exists(path) == false)
-            {
-                File.Create(path).Close();
-            }
-            using (var stream = new StreamWriter(path, false))
-            {
-                var sb = new StringBuilder();
-                for (int i = 0; i < layers.Count-1; i++)
-                {
-                    sb.Append($"{layers[i].NeuronsCount}|");
-                }
-                sb.Append(layers.Last().NeuronsCount);
-                stream.WriteLine(sb.ToString());
-                for (int i = 0; i < layers.Count(); i++)
-                {
-                    for (int j = 0; j < layers[i].NeuronsCount; j++)
-                    {
-                        var jsonString = JsonSerializer.Serialize(layers[i].Neurons[j].Weights);
-                        stream.WriteLine(jsonString);
+                        neurons[i][j] = new Neuron(neuronsCountInLayers[i - 1]);
                     }
                 }
             }
         }
-
-        public  void LoadWeights(string path)
+        private double[][] FeedForward(double[] input)
         {
-            if(File.Exists(path)==false)
+            double[][] output = new double[neurons.Length][];
+
+            //Выход первого слоя
+            output[1] = new double[neurons[1].Count()];
+            for (int j = 0; j < neurons[1].Count(); j++)
             {
-                throw new FileNotFoundException();
+                output[1][j] = neurons[1][j].GetOutput(input);
             }
-            using(var stream = new StreamReader(path))
+
+            //Выходы оставшихся слоев
+            for (int i = 2; i < output.Length; i++)
             {
-                var line=stream.ReadLine();
-                if (String.IsNullOrEmpty(line)) return; // Можно выкинуть исключение
-                var topology = line.Split('|');
-                if (topology.Length != layers.Count) throw new ArgumentException("Топология из файла не совпадает с топологией сети");
-                for (int i=0; i<layers.Count; i++)
+                output[i] = new double[neurons[i].Count()];
                 {
-                    if (layers[i].NeuronsCount != int.Parse(topology[i])) throw new ArgumentException("Количество нейронов не совпадает");
-                }
-                for (int i = 0; i < topology.Length; i++)
-                {
-                    for ( int j=0; j < int.Parse(topology[i]); j++)
+                    for (int j = 0; j < neurons[i].Count(); j++)
                     {
-                        line = stream.ReadLine();
-                        if (String.IsNullOrEmpty(line)) throw new Exception();
-                        var weights = JsonSerializer.Deserialize(line, typeof(IEnumerable<double>));
-                        layers[i].Neurons[j].SetWeights((IEnumerable<double>)weights);
+                        output[i][j] = neurons[i][j].GetOutput(output[i - 1]);
                     }
                 }
             }
+
+            return output;
+        }
+        public double[] Predict(double[] input)
+        {
+            double[][] output = FeedForward(input);
+            return output[neurons.Count() -1];
+        }
+        public bool Learn(double[] input, double[] correctOutput)
+        {
+            double[][] output = FeedForward(input);
+            int countlearning = 0;
+            if (CompareVectors(correctOutput, output[neurons.Count() - 1]))
+            {
+                return true;
+            }
+
+            while (!CompareVectors(correctOutput, output[neurons.Count() - 1]))
+            {
+                countlearning++;
+                if (countlearning > 1000)
+                {
+                    break;
+                }
+
+                for (int i = 0; i < output[neurons.Count() - 1].Count(); i++)
+                {
+                    neurons[neurons.Count() - 1][i].UpdateErrorOutputLayer(correctOutput[i], output[neurons.Count() - 1][i]);
+                }
+
+                for (int i = output.Count() - 2; i >= 1; i--)
+                {
+                    for (int j = 0; j < output[i].Count(); j++)
+                    {
+                        neurons[i][j].UpdateError(neurons[i + 1], output[i][j], j);
+                    }
+                }
+
+                for (int i = neurons.Count() - 1; i >= 1; i--)
+                {
+                    for (int j = 0; j < neurons[i].Count(); j++)
+                    {
+                        if (i - 1 != 0)
+                        {
+                            neurons[i][j].UpdateWeights(output[i - 1]);
+                        }
+                        else if (i - 1 == 0)
+                        {
+                            neurons[i][j].UpdateWeights(input);
+                        }
+                    }
+                }
+                output = FeedForward(input);
+            }
+
+            return false;
+        }
+
+        private bool CompareVectors(double[] a, double[] b)
+        {
+            if (a.Length != b.Length)
+                return false;
+
+            for (int i = 0; i < a.Length; i++)
+                if ((a[i] == 0 && b[i] > 0.1) || (a[i] == 1 && b[i] < 0.9))
+                    return false;
+
+            return true;
         }
     }
 }
