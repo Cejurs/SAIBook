@@ -13,7 +13,7 @@ namespace Test
         private static string labelFile = @"..\..\..\Files\train-labels.idx1-ubyte";
         private static string imageFile1 = @"..\..\..\Files\t10k-images.idx3-ubyte";
         private static string labelFile1 = @"..\..\..\Files\t10k-labels.idx1-ubyte";
-        private static string imagePath = @"..\..\..\Files\5.png";
+        private static string imagePath = @"..\..\..\Files\3.png";
         private static Dataset train;
         private static Dataset test;
 
@@ -53,7 +53,7 @@ namespace Test
                     answer = k;
                 }
             }
-            Console.WriteLine($"Ответ - {answer}");
+            Console.WriteLine($"Ответ нейросети - {answer} с вероятностью {max}");
 
 
         }
