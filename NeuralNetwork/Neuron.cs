@@ -5,9 +5,9 @@ namespace NeuralNetwork
 {
     public class Neuron
     {
-        private protected double[] weights;
-        private double bias;
-        private protected double error;
+        internal double[] weights;
+        internal double bias;
+        private double error;
         private int numberOfSynapses;
         public Neuron(int numberOfSynapses)
         {
@@ -16,6 +16,7 @@ namespace NeuralNetwork
             this.bias = 1;
             RandomizeWeights();
         }
+
 
         internal double GetOutput(double[] input)
         {
