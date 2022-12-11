@@ -6,7 +6,7 @@
 Ссылка на mnist датасет - http://yann.lecun.com/exdb/mnist/
 <br>
 На рисунке 1 показана точность распознавания из выборки 10 тысяч.
-<p align="center"> ![Screenshot](Test/Files/mnist.png) </p>
+<p align="center"> <img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/.png?raw=true" alt="Sublime's custom image"/> </p>
 <p align="center"> Рисунок 1 </p>
 <br>
 Для тестирования нейронной сети на наших собственных изображениях подготовим их в photoshop( писать пользовательский интерфейс мы не будем, только консоль только хардкорд)<br>
