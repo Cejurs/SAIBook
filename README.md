@@ -9,18 +9,18 @@
 <p align="center"> ![Screenshot](Test/Files/mnist.png) </p>
 <p align="center"> Рисунок 1 </p>
 <br>
-Для тестирования нейронной сети на наших собственных изображениях подготовим их в photoshop( писать пользовательский интерфейс мы не будем, только консоль только хардкорд)
+Для тестирования нейронной сети на наших собственных изображениях подготовим их в photoshop( писать пользовательский интерфейс мы не будем, только консоль только хардкорд)<br>
 Нарисованная в фотошопе цифра 5:
-![Screenshot](Test/Files/5.png)
+<img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/5.png?raw=true" alt="Sublime's custom image"/>
 Результат работы нейронной сети для цифры 5 показан на рисунке 2.
 <br>
-<p align="center"> <img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/mnist.png?raw=true" alt="Sublime's custom image"/> </p>
+<p align="center"> <img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/test5.png?raw=true" alt="Sublime's custom image"/> </p>
 <p align="center"> Рисунок 2 </p>
 <br>
 Нарисованная в фотошопе цифра 3:
-![Screenshot](Test/Files/5.png)
+<img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/3.png?raw=true" alt="Sublime's custom image"/>
 Результат работы нейронной сети для цифры 3 показан на рисунке 3.
 <br>
-<p align="center"> ![Screenshot](Test/Files/test3.png) </p>
+<p align="center"> <img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/test3.png?raw=true" alt="Sublime's custom image"/> </p>
 <p align="center"> Рисунок 3 </p>
 <br>
