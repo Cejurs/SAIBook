@@ -14,7 +14,7 @@
 ![Screenshot](Test/Files/5.png)
 Результат работы нейронной сети для цифры 5 показан на рисунке 2.
 <br>
-<p align="center"> ![Screenshot](Test/Files/test5.png) </p>
+<p align="center"> <img src="https://github.com/Cejurs/SAIBook/blob/master/Test/Files/mnist.png?raw=true" alt="Sublime's custom image"/> </p>
 <p align="center"> Рисунок 2 </p>
 <br>
 Нарисованная в фотошопе цифра 3:
